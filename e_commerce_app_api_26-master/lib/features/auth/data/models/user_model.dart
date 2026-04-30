@@ -8,15 +8,16 @@ class UserModel {
   String? creationAt;
   String? updatedAt;
 
-  UserModel(
-      {this.id,
-        this.email,
-        this.password,
-        this.name,
-        this.role,
-        this.avatar,
-        this.creationAt,
-        this.updatedAt});
+  UserModel({
+    this.id,
+    this.email,
+    this.password,
+    this.name,
+    this.role,
+    this.avatar,
+    this.creationAt,
+    this.updatedAt,
+  });
 
   UserModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -28,5 +29,4 @@ class UserModel {
     creationAt = json['creationAt'];
     updatedAt = json['updatedAt'];
   }
-
 }

@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       try {
         setState(() {
-          isLoading=true;
+          isLoading = true;
         });
         await AuthApi().login(
           email: _emailController.text.trim(),
@@ -45,13 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } catch (e) {
-        isLoading=false;
+        isLoading = false;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
-
-
     }
   }
 

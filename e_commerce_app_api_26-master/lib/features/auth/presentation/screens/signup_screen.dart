@@ -41,10 +41,9 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Account Created Successfully!")),
         );
-        Navigator.pushReplacement(
+        Navigator.of(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        ).pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
       } catch (e) {
         setState(() {
           isLoading = false;
@@ -54,10 +53,6 @@ class _SignupScreenState extends State<SignupScreen> {
         ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
       ;
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text('Signed up')),
-      //   );
-      //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> LoginScreen()));
     }
   }
 

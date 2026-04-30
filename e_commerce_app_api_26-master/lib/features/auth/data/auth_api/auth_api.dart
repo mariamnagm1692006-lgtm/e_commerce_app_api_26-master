@@ -9,8 +9,10 @@ import '../models/error_model.dart';
 
 class AuthApi {
   ///login
-  Future<Tokenmodel> login(
-      {required String email, required String Password}) async {
+  Future<Tokenmodel> login({
+    required String email,
+    required String Password,
+  }) async {
     Uri url = Uri.parse(Endboint.baseurl + Endboint.login);
     Map<String, dynamic> RequestBody = {
       ApiKeys.email: email,
@@ -38,13 +40,13 @@ class AuthApi {
     required String name,
     required String email,
     required String password,
-    })async{
+  }) async {
     Uri url = Uri.parse(Endboint.baseurl + Endboint.signup);
     Map<String, dynamic> RequestBody = {
-      ApiKeys.name:name,
+      ApiKeys.name: name,
       ApiKeys.email: email,
       ApiKeys.password: password,
-      ApiKeys.avatar:"https://api.lorem.space/image/face?w=640&h=480",
+      ApiKeys.avatar: "https://api.lorem.space/image/face?w=640&h=480",
     };
     var response = await http.post(
       url,
@@ -60,8 +62,5 @@ class AuthApi {
       ErrorToken errorToken = ErrorToken.fromJson(json);
       throw Exception(errorToken.message);
     }
-    }
-
   }
-
-
+}
