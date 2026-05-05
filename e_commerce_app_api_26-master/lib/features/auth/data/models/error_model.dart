@@ -8,5 +8,6 @@ class ErrorToken {
     message = json['message'];
     statusCode = json['statusCode'];
   }
+
 }
 

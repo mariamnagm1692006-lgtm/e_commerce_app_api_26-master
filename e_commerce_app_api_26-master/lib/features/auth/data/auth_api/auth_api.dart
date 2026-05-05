@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:ecommerce_app_api_26/core/storage/storage_helper.dart';
 import 'package:ecommerce_app_api_26/features/auth/data/models/token_model.dart';
 import 'package:ecommerce_app_api_26/features/auth/data/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../../core/endboint/end_boint.dart';
+import '../../../../core/endpoint/end_point.dart';
 import '../models/error_model.dart';
 
 class AuthApi {
@@ -13,7 +14,7 @@ class AuthApi {
     required String email,
     required String Password,
   }) async {
-    Uri url = Uri.parse(Endboint.baseurl + Endboint.login);
+    Uri url = Uri.parse(EndPoint.baseurl + EndPoint.login);
     Map<String, dynamic> RequestBody = {
       ApiKeys.email: email,
       ApiKeys.password: Password,
@@ -28,6 +29,7 @@ class AuthApi {
     var json = jsonDecode(requestBody);
     if (response.statusCode == 200 || response.statusCode == 201) {
       Tokenmodel tokenmodel = Tokenmodel.fromJson(json);
+      StorageHelper.saveToken(tokenmodel.accessToken??"");
       return tokenmodel;
     } else {
       ErrorToken errorToken = ErrorToken.fromJson(json);
@@ -41,7 +43,7 @@ class AuthApi {
     required String email,
     required String password,
   }) async {
-    Uri url = Uri.parse(Endboint.baseurl + Endboint.signup);
+    Uri url = Uri.parse(EndPoint.baseurl + EndPoint.signup);
     Map<String, dynamic> RequestBody = {
       ApiKeys.name: name,
       ApiKeys.email: email,

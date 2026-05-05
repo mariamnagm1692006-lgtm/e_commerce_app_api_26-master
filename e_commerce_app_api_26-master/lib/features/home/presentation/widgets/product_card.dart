@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -44,7 +45,8 @@ class ProductCard extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  const Center(child: Icon(Icons.shopping_bag_outlined, size: 40, color: Colors.blue)),
+                   Center(child: Image.network(
+                image)),
                   PositionBag(
                     top: 10,
                     right: 10,
@@ -121,3 +123,12 @@ class PositionBag extends StatelessWidget {
     return Positioned(top: top, right: right, child: child);
   }
 }
+
+
+
+
+
+
+
+
+

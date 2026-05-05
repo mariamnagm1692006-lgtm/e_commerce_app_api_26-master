@@ -1,7 +1,11 @@
-class Endboint {
+class EndPoint {
   static String baseurl = "https://api.escuelajs.co/api/v1/";
   static String login = "auth/login";
   static String signup = "users/";
+  static String profile = "auth/profile";
+  static String Products = "products/";
+  static String categories = "categories/";
+
 }
 
 // "name":

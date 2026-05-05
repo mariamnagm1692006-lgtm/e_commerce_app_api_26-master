@@ -2,8 +2,6 @@ import 'package:ecommerce_app_api_26/features/auth/data/auth_api/auth_api.dart';
 import 'package:ecommerce_app_api_26/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../../../home/presentation/screens/home_screen.dart';
-
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 

@@ -1,9 +1,10 @@
 import 'package:ecommerce_app_api_26/features/auth/data/auth_api/auth_api.dart';
-import 'package:ecommerce_app_api_26/features/auth/data/models/token_model.dart';
 import 'package:ecommerce_app_api_26/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_app_api_26/features/auth/presentation/screens/signup_screen.dart';
-import 'package:ecommerce_app_api_26/features/main_wrapper/presentation/screens/main_wrapper.dart';
+
+import '../../../main_wrapper/presentation/screens/main_wrapper.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ).showSnackBar(SnackBar(content: Text("Logged in")));
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainWrapper()),
         );
       } catch (e) {
         isLoading = false;
