@@ -1,20 +1,54 @@
 import 'package:ecommerce_app_api_26/features/profile/data/models/profile_model.dart';
 import 'package:ecommerce_app_api_26/features/profile/data/profile_api/profile_api.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ecommerce_app_api_26/features/profile/data/profile_api/upload_api.dart';
+import 'package:ecommerce_app_api_26/features/profile/data/models/upload_model.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  Future<void> uploadProfileImage() async {
+    /// استخدمنا باكدج ImagePicker
+    /// عشان اقدر اختار صوره من ال gallery
+    XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    try {
+      /// ببعت الصوره الي اخترتها للفانكشن الي بتعمل upload للصوره
+      UploadModel uploadModel = await UploadApi().uploadImage(image.path);
+
+      setState(() {
+        ///لما السيرفر ينجح انه يرفع الصوره مش بيبعت الصوره كا ملف ذي ما بعتهوله بيبعتلنا ال location بتاع الصوره بلمكان الي محفوظ فيها الصوره في السيرفرات علي الانترنت
+        imageUrl = uploadModel.location;
+      });
+    } catch (e) {
+      print("ERROR = $e");
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  @override
+  //////////////////////
+  String? imageUrl;
+
+  final ImagePicker picker = ImagePicker();
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      /////////////////////////////////////////////////
-      body: FutureBuilder(
+      body: FutureBuilder<ProfileModel>(
         future: ProfileApi().getProfile(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError || snapshot.data == null) {
             return Center(
@@ -56,9 +90,11 @@ class ProfileScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 40,
                           backgroundColor: Colors.white,
+                          ///لو رفعنا صوره جديده يستخدمها مرفعش يستخدم الي موجوده في الAPI لو مفيش اي صوره تعرض ال default الي موجوده
                           backgroundImage: NetworkImage(
-                            profileModel?.avatar ??
-                                "https://images.unsplash.com/photo-1554080353-a576cf803bda?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGhvdG98ZW58MHx8MHx8fDA%3D",
+                            imageUrl ??
+                                profileModel?.avatar ??
+                                "https://images.unsplash.com/photo-1554080353-a576cf803bda?q=80&w=1000",
                           ),
                         ),
                       ),
@@ -89,7 +125,8 @@ class ProfileScreen extends StatelessWidget {
                           Icons.edit_outlined,
                           color: Colors.white,
                         ),
-                        onPressed: () {},
+                        /////////////////
+                        onPressed: uploadProfileImage,
                       ),
                     ],
                   ),
@@ -211,5 +248,3 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-
-

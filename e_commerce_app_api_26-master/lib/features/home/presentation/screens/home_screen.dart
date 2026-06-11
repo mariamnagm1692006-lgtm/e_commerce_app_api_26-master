@@ -111,6 +111,7 @@ class HomeScreen extends StatelessWidget {
                       price: (product.price ?? 0).toDouble(),
                       description: product.description??"",
                       image: product.images![0],
+                      id: product.id,
                     );
                   },
                 ),
@@ -128,36 +129,3 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-
-
-// SingleChildScrollView(
-// scrollDirection: Axis.horizontal,
-// padding: const EdgeInsets.symmetric(horizontal: 16),
-// child: Row(
-// children: ['All', 'Shoes', 'Shirts', 'Tech', 'Home'].map((cat) {
-// bool isAll = cat == 'All';
-// return Container(
-// margin: const EdgeInsets.only(right: 12),
-// padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-// decoration: BoxDecoration(
-// color: isAll ? Colors.blue : Colors.white,
-// borderRadius: BorderRadius.circular(12),
-// boxShadow: [
-// if (!isAll)
-// BoxShadow(
-// color: Colors.black.withOpacity(0.05),
-// blurRadius: 5,
-// )
-// ],
-// ),
-// child: Text(
-// cat,
-// style: TextStyle(
-// color: isAll ? Colors.white : Colors.grey.shade700,
-// fontWeight: FontWeight.bold,
-// ),
-// ),
-// );
-// }).toList(),
-// ),
-// )

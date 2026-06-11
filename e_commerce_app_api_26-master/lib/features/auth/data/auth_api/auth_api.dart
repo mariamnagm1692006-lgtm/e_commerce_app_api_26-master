@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../../core/endpoint/end_point.dart';
 import '../models/error_model.dart';
+import '../models/signup_error_model.dart';
 
 class AuthApi {
   ///login
@@ -61,8 +62,8 @@ class AuthApi {
       UserModel userModel = UserModel.fromJson(json);
       return userModel;
     } else {
-      ErrorToken errorToken = ErrorToken.fromJson(json);
-      throw Exception(errorToken.message);
+      SignupErrorModel errorModel = SignupErrorModel.fromJson(json);
+      throw Exception(errorModel.getFormattedMessage());
     }
   }
 }

@@ -5,13 +5,9 @@ class EndPoint {
   static String profile = "auth/profile";
   static String Products = "products/";
   static String categories = "categories/";
+  static const String upload = "files/upload";
 
 }
-
-// "name":
-// "email":
-// "password":
-// "avatar":
 class ApiKeys {
   static String email = "email";
   static String name = "name";

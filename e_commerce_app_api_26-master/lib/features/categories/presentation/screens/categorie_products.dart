@@ -45,6 +45,8 @@ class CategorieProducts extends StatelessWidget {
                   price: (product.price ?? 0).toDouble(),
                   description: product.description??"",
                   image: product.images![0],
+                  /////////////
+                  id: product.id,
                 );
               },
             ),

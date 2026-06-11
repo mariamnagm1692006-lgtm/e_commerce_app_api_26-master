@@ -1,11 +1,15 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../cart/presentation/data/cart_cache.dart';
+
 class ProductCard extends StatelessWidget {
   final String title;
   final double price;
   final String description;
   final String image;
+  //////////
+  final int? id;
 
   const ProductCard({
     super.key,
@@ -13,6 +17,8 @@ class ProductCard extends StatelessWidget {
     required this.price,
     required this.description,
     required this.image,
+    /////////////
+    required this.id,
   });
 
   @override
@@ -93,14 +99,39 @@ class ProductCard extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
+                    GestureDetector(
+                      onTap: () async {
+                        ///هيضيف المنتج لل cart باستخدام الid
+                        await CartCache.addToCart(
+                          id.toString(),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Added To Cart"),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 20),
-                    ),
+                    )
+                    // Container(
+                    //   padding: const EdgeInsets.all(4),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.blue,
+                    //     borderRadius: BorderRadius.circular(8),
+                    //   ),
+                    //   child: const Icon(Icons.add, color: Colors.white, size: 20),
+                    // ),
                   ],
                 ),
               ],
