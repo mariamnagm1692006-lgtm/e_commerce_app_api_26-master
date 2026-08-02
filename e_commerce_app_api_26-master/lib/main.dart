@@ -1,4 +1,5 @@
 import 'package:ecommerce_app_api_26/features/auth/presentation/screens/login_screen.dart';
+import 'package:ecommerce_app_api_26/features/main_wrapper/presentation/screens/main_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_app_api_26/core/theme/app_theme.dart';
 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      home: const LoginScreen(),
+      home: LoginScreen() ,
     );
   }
 }

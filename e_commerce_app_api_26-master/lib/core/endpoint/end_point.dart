@@ -6,8 +6,8 @@ class EndPoint {
   static String Products = "products/";
   static String categories = "categories/";
   static const String upload = "files/upload";
-
 }
+
 class ApiKeys {
   static String email = "email";
   static String name = "name";

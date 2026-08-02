@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:ecommerce_app_api_26/core/storage/storage_helper.dart';
 import 'package:ecommerce_app_api_26/features/auth/data/models/token_model.dart';
 import 'package:ecommerce_app_api_26/features/auth/data/models/user_model.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../../core/endpoint/end_point.dart';
 import '../models/error_model.dart';
 import '../models/signup_error_model.dart';
@@ -30,7 +28,7 @@ class AuthApi {
     var json = jsonDecode(requestBody);
     if (response.statusCode == 200 || response.statusCode == 201) {
       Tokenmodel tokenmodel = Tokenmodel.fromJson(json);
-      StorageHelper.saveToken(tokenmodel.accessToken??"");
+      StorageHelper.saveToken(tokenmodel.accessToken ?? "");
       return tokenmodel;
     } else {
       ErrorToken errorToken = ErrorToken.fromJson(json);

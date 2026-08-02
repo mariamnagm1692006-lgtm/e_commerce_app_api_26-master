@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../../home/data/models/prduct_model.dart';
-import '../../../home/data/product_api/products_api.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../home/presentation/widgets/product_card.dart';
+import '../../cubit_product_by_categorie/product_by_cateegorie_cubit.dart';
+import '../../cubit_product_by_categorie/product_py_categorie_state.dart';
 
 class CategorieProducts extends StatelessWidget {
   const CategorieProducts ({super.key, required this.id});
@@ -11,50 +10,58 @@ class CategorieProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: FutureBuilder(future: ProductsApi().getProductByCategories(id), builder:  (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError || snapshot.data == null) {
-          return Center(
-            child: Text(
-              "Error",
-              style: TextStyle(color: Colors.red, fontSize: 20),
-            ),
-          );
-        }
-        List<ProductModel>products= snapshot.data??[];
-        return  SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.7,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+    return  BlocProvider(
+      create: (context) => ProductByCateegorieCubit()..getProductByCategories(id),
+      child: Scaffold(
+
+
+        body: BlocBuilder<ProductByCateegorieCubit,ProductPyCategorieState>(builder: (context, state) {
+
+          if (state is ProductPyCategorieLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (state is ProductPyCategorieError) {
+            return Center(
+              child: Text(
+                "Error",
+                style: TextStyle(fontSize: 20, fontWeight: .bold),
               ),
-              itemCount: products?.length,
-              itemBuilder: (context, index) {
-                final product = products![index];
-                return ProductCard(
-                  title: product.title?? "No Title",
-                  price: (product.price ?? 0).toDouble(),
-                  description: product.description??"",
-                  image: product.images![0],
-                  /////////////
-                  id: product.id,
-                );
-              },
-            ),
+            );
+        }
+          if(state is ProductPyCategorieSuccess){
+            return  SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount:state.products.length,
+                  itemBuilder: (context, index) {
+                    final product = state.products[index];
+                    return ProductCard(
+                      title: product.title?? "No Title",
+                      price: (product.price ?? 0).toDouble(),
+                      description: product.description??"",
+                      image: product.images![0],
+                      /////////////
+                      id: product.id,
+                    );
+                  },
+                ),
           ),
-        );
-      
-      
-      },),
+          );
+
+          }
+          return SizedBox.shrink();
+    })
+
+      ),
     );
   }
 }

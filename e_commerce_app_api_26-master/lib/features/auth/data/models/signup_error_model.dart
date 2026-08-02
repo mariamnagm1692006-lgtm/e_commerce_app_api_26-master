@@ -11,7 +11,6 @@ class SignupErrorModel {
     error = json['error'];
   }
 
-
   String getFormattedMessage() {
     if (message is List) {
       return (message as List).join('\n');

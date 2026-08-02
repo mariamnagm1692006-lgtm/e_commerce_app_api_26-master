@@ -1,9 +1,8 @@
-import 'package:ecommerce_app_api_26/features/profile/data/models/profile_model.dart';
-import 'package:ecommerce_app_api_26/features/profile/data/profile_api/profile_api.dart';
+import 'package:ecommerce_app_api_26/features/profile/data/cubit/profile_state.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:ecommerce_app_api_26/features/profile/data/profile_api/upload_api.dart';
-import 'package:ecommerce_app_api_26/features/profile/data/models/upload_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../data/cubit/profile_cubit.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,190 +12,166 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<void> uploadProfileImage() async {
-    /// استخدمنا باكدج ImagePicker
-    /// عشان اقدر اختار صوره من ال gallery
-    XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-
-    try {
-      /// ببعت الصوره الي اخترتها للفانكشن الي بتعمل upload للصوره
-      UploadModel uploadModel = await UploadApi().uploadImage(image.path);
-
-      setState(() {
-        ///لما السيرفر ينجح انه يرفع الصوره مش بيبعت الصوره كا ملف ذي ما بعتهوله بيبعتلنا ال location بتاع الصوره بلمكان الي محفوظ فيها الصوره في السيرفرات علي الانترنت
-        imageUrl = uploadModel.location;
-      });
-    } catch (e) {
-      print("ERROR = $e");
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
   @override
-  //////////////////////
-  String? imageUrl;
-
-  final ImagePicker picker = ImagePicker();
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: FutureBuilder<ProfileModel>(
-        future: ProfileApi().getProfile(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || snapshot.data == null) {
-            return Center(
-              child: Text(
-                "Error",
-                style: TextStyle(color: Colors.red, fontSize: 20),
-              ),
-            );
-          }
-          ProfileModel? profileModel = snapshot.data;
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.blue.shade400, Colors.blue.shade700],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(40),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                            ),
-                          ],
+    return BlocProvider(
+      create: (_) => ProfileCubit()..getProfile(),
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade50,
+        body: BlocBuilder<ProfileCubit, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (state is ProfileError) {
+              return Center(child: Text(state.message));
+            }
+            if (state is ProfileSuccess) {
+              final profileModel = state.profileModel;
+              final imageUrl = state.imageUrl;
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.blue.shade400, Colors.blue.shade700],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.white,
-                          ///لو رفعنا صوره جديده يستخدمها مرفعش يستخدم الي موجوده في الAPI لو مفيش اي صوره تعرض ال default الي موجوده
-                          backgroundImage: NetworkImage(
-                            imageUrl ??
-                                profileModel?.avatar ??
-                                "https://images.unsplash.com/photo-1554080353-a576cf803bda?q=80&w=1000",
-                          ),
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(40),
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(
-                            profileModel?.name ?? " ",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 3),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundColor: Colors.white,
+
+                              backgroundImage: NetworkImage(
+                                imageUrl ??
+                                    profileModel.avatar ??
+                                    "https://images.unsplash.com/photo-1554080353-a576cf803bda?q=80&w=1000",
+                              ),
                             ),
                           ),
-                          Text(
-                            profileModel?.role ?? "",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
+                          const SizedBox(width: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                profileModel.name ?? " ",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                profileModel.role ?? "",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.edit_outlined,
+                              color: Colors.white,
+                            ),
+                            /////////////////
+                            onPressed: () {
+                              context.read<ProfileCubit>().uploadImage();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        children: [
+                          _buildSectionTitle('Account Settings'),
+                          _buildProfileTile(
+                            Icons.shopping_bag_outlined,
+                            'My Orders',
+                            'Track your orders',
+                          ),
+                          _buildProfileTile(
+                            Icons.favorite_outline,
+                            'Wishlist',
+                            'Your favorite items',
+                          ),
+                          _buildProfileTile(
+                            Icons.location_on_outlined,
+                            'Shipping Address',
+                            'Manage your addresses',
+                          ),
+                          _buildProfileTile(
+                            Icons.payment_outlined,
+                            'Payment Methods',
+                            'Credit cards, wallets',
+                          ),
+                          const SizedBox(height: 24),
+                          _buildSectionTitle('App Settings'),
+                          _buildProfileTile(
+                            Icons.notifications_none,
+                            'Notifications',
+                            'Control your alerts',
+                          ),
+                          _buildProfileTile(
+                            Icons.lock_outline,
+                            'Privacy',
+                            'Manage your security',
+                          ),
+                          const SizedBox(height: 32),
+                          SizedBox(
+                            width: double.infinity,
+                            child: TextButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.logout, color: Colors.red),
+                              label: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.all(16),
+                                backgroundColor: Colors.red.withOpacity(0.05),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.edit_outlined,
-                          color: Colors.white,
-                        ),
-                        /////////////////
-                        onPressed: uploadProfileImage,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      _buildSectionTitle('Account Settings'),
-                      _buildProfileTile(
-                        Icons.shopping_bag_outlined,
-                        'My Orders',
-                        'Track your orders',
-                      ),
-                      _buildProfileTile(
-                        Icons.favorite_outline,
-                        'Wishlist',
-                        'Your favorite items',
-                      ),
-                      _buildProfileTile(
-                        Icons.location_on_outlined,
-                        'Shipping Address',
-                        'Manage your addresses',
-                      ),
-                      _buildProfileTile(
-                        Icons.payment_outlined,
-                        'Payment Methods',
-                        'Credit cards, wallets',
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSectionTitle('App Settings'),
-                      _buildProfileTile(
-                        Icons.notifications_none,
-                        'Notifications',
-                        'Control your alerts',
-                      ),
-                      _buildProfileTile(
-                        Icons.lock_outline,
-                        'Privacy',
-                        'Manage your security',
-                      ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.logout, color: Colors.red),
-                          label: const Text(
-                            'Logout',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.all(16),
-                            backgroundColor: Colors.red.withOpacity(0.05),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+              );
+            }
+            return SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

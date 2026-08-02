@@ -8,5 +8,4 @@ class ProfileErrorModel {
     message = json['message'];
     statusCode = json['statusCode'];
   }
-
 }

@@ -6,15 +6,14 @@ class ProfileModel {
   String? role;
   String? avatar;
 
-
-  ProfileModel(
-      {this.id,
-        this.email,
-        this.password,
-        this.name,
-        this.role,
-        this.avatar,
-       });
+  ProfileModel({
+    this.id,
+    this.email,
+    this.password,
+    this.name,
+    this.role,
+    this.avatar,
+  });
 
   ProfileModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -23,8 +22,5 @@ class ProfileModel {
     name = json['name'];
     role = json['role'];
     avatar = json['avatar'];
-
   }
-
-
 }

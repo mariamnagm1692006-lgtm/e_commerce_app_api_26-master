@@ -1,6 +1,7 @@
 class UploadModel {
   String? originalname;
   String? filename;
+
   ///ال url بتاع الصوره بعد ما رفعناها
   String? location;
 
@@ -11,5 +12,4 @@ class UploadModel {
     filename = json['filename'];
     location = json['location'];
   }
-  
 }

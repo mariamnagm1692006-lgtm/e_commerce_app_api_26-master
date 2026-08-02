@@ -13,27 +13,20 @@ class UploadApi {
     );
 
     request.files.add(
-       ///بحول ال path بتاع الصوره لMultipartFile عشان اقدر ابعته للسيرفر عشان هو مش بيقدر يقرأ عنوان الصوره
-      await http.MultipartFile.fromPath(
-        "file",
-        path,
-      ),
+      ///بحول ال path بتاع الصوره لMultipartFile عشان اقدر ابعته للسيرفر عشان هو مش بيقدر يقرأ عنوان الصوره
+      await http.MultipartFile.fromPath("file", path),
     );
 
     var response = await request.send();
 
-    var responseData = jsonDecode(
-      await response.stream.bytesToString(),
-    );
+    var responseData = jsonDecode(await response.stream.bytesToString());
     print("Status Code = ${response.statusCode}");
     print("Response = $responseData");
 
-    if (response.statusCode == 200 ||
-        response.statusCode == 201) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return UploadModel.fromJson(responseData);
     } else {
-      UploadErrorModel error =
-      UploadErrorModel.fromJson(responseData);
+      UploadErrorModel error = UploadErrorModel.fromJson(responseData);
 
       throw Exception(error.message);
     }
